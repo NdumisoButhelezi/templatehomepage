@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-10">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold text-amber-400 mb-4">YourBrand</h3>
+            <h3 className="text-xl font-bold text-amber-400 mb-4">planet 09 ai</h3>
             <p className="mb-4">
               A modern starter template with a clean design using black, gold, and silver gray colors.
             </p>

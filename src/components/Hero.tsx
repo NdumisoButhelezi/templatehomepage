@@ -5,7 +5,7 @@ const Hero = () => {
     <section className="bg-gradient-to-b from-black to-gray-900 text-white py-20">
       <div className="container mx-auto px-4 text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">
-          Welcome to <span className="text-amber-400">YourBrand</span>
+          Welcome to <span className="text-amber-400">PLanet 09 AI </span>
         </h1>
         <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
           A modern and elegant starter template with a clean design using black, gold, and silver gray colors.
