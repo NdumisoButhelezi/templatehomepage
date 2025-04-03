@@ -81,7 +81,7 @@ const Hero = () => {
             </div>
 
             {/* Slide indicators */}
-            <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2">
+            <div className="absolute bottom-8 left-1 right-0 flex justify-center gap-2">
               {slides.map((_, index) => (
                 <button
                   key={index}
