@@ -1,4 +1,7 @@
-import { FeatureItem } from '../types';
+type FeatureItem = {
+  title: string;
+  description: string;
+};
 
 const Features = () => {
   const features: FeatureItem[] = [

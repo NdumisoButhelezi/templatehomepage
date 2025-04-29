@@ -1,17 +1,34 @@
 import React, { useState } from 'react';
+import { getFirestore } from "firebase/firestore";
+import { app } from '../firebase';
+
+const db = getFirestore(app);
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+
+type FormData = {
+  name: string;
+  email: string;
+  message: string;
+};
+
+type FormErrors = {
+  name?: string;
+  email?: string;
+  message?: string;
+};
 
 const ContactForm = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     message: ''
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const validate = () => {
-    const newErrors = {};
+  const validate = (): FormErrors => {
+    const newErrors: FormErrors = {};
     if (!formData.name.trim()) newErrors.name = 'Name is required';
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
@@ -22,15 +39,15 @@ const ContactForm = () => {
     return newErrors;
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
+    if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -40,11 +57,15 @@ const ContactForm = () => {
 
     setIsSubmitting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await addDoc(collection(db, "messages"), {
+        ...formData,
+        createdAt: Timestamp.now()
+      });
       setSubmitSuccess(true);
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
       console.error('Submission error:', error);
+      setErrors({ message: "Failed to send message. Please try again." });
     } finally {
       setIsSubmitting(false);
     }
@@ -98,7 +119,7 @@ const ContactForm = () => {
                 <textarea
                   id="message"
                   name="message"
-                  rows="4"
+                  rows={4}
                   value={formData.message}
                   onChange={handleChange}
                   className={`w-full p-3 border rounded-md ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'} bg-white dark:bg-gray-800 dark:text-white`}
