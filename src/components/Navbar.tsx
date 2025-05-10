@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DarkModeToggle from './DarkModeToggle';
+import useDarkMode from './types';
 
 const navItems = [
   { name: 'Home', path: '/' },
   { name: 'About', path: '/about' },
   { name: 'Services', path: '/services' },
+  { name: 'Projects', path: '/projects' },
   { name: 'Contact', path: '/contact' },
 ];
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const [isDark, setIsDark] = useDarkMode();
 
   return (
     <header className="bg-black dark:bg-gray-900 text-white shadow-md fixed w-full top-0 z-50">
@@ -37,9 +40,8 @@ const Navbar = () => {
                   </li>
                 ))}
               </ul>
+              <DarkModeToggle />
             </nav>
-
-            <DarkModeToggle />
 
             <button
               className="md:hidden text-white hover:text-gold-400 transition-colors duration-300"
@@ -64,7 +66,7 @@ const Navbar = () => {
             </button>
           </div>
         </div>
-
+        {/* Mobile menu */}
         <nav className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} mt-4`}>
           <ul className="flex flex-col space-y-4">
             {navItems.map((item) => (
