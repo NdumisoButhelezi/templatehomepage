@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 export interface FeatureItem {
     title: string;
     description: string;
@@ -21,3 +23,25 @@ export interface FeatureItem {
     email: string;
     message: string;
   }
+
+const DARK_MODE_KEY = 'darkMode';
+
+const useDarkMode = () => {
+  const [isDark, setIsDark] = useState(() => {
+    const stored = localStorage.getItem(DARK_MODE_KEY);
+    return stored ? stored === 'true' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(DARK_MODE_KEY, String(isDark));
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
+
+  return [isDark, setIsDark] as const;
+};
+
+export default useDarkMode;
