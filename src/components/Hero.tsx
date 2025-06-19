@@ -38,14 +38,26 @@ const Hero = () => {
             index === currentSlide ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${slide.image})`,
-            }}
-          >
-            <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-          </div>
+          {/* Use <img> for LCP and SEO, only for the first slide */}
+          {index === 0 ? (
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className={`absolute inset-0 w-full h-full object-cover ${index === currentSlide ? '' : 'hidden'}`}
+              fetchPriority="high"
+              decoding="async"
+              style={{ zIndex: 1 }}
+            />
+          ) : null}
+          {/* For other slides, use background image for smooth fade */}
+          {index !== 0 && (
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${slide.image})`, zIndex: 1 }}
+              aria-hidden={index !== currentSlide}
+            />
+          )}
+          <div className="absolute inset-0 bg-black bg-opacity-60" style={{ zIndex: 2 }}></div>
         </div>
       ))}
 

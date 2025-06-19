@@ -25,7 +25,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-6">
-            <nav className="hidden md:block">
+            <nav className="hidden md:block" aria-label="Main navigation">
               <ul className="flex space-x-6">
                 {navItems.map((item) => (
                   <li key={item.name}>
@@ -34,6 +34,7 @@ const Navbar = () => {
                       className={`hover:text-gold-400 transition-all duration-300 hover:scale-110 inline-block ${
                         location.pathname === item.path ? 'text-gold-400' : ''
                       }`}
+                      aria-current={location.pathname === item.path ? 'page' : undefined}
                     >
                       {item.name}
                     </Link>
@@ -67,7 +68,7 @@ const Navbar = () => {
           </div>
         </div>
         {/* Mobile menu */}
-        <nav className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} mt-4`}>
+        <nav className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} mt-4`} aria-label="Mobile navigation">
           <ul className="flex flex-col space-y-4">
             {navItems.map((item) => (
               <li key={item.name}>
@@ -77,6 +78,7 @@ const Navbar = () => {
                     location.pathname === item.path ? 'text-gold-400' : ''
                   }`}
                   onClick={() => setIsMenuOpen(false)}
+                  aria-current={location.pathname === item.path ? 'page' : undefined}
                 >
                   {item.name}
                 </Link>

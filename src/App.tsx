@@ -20,6 +20,11 @@ function App() {
         <title>YourBrand | Modern Web Solutions</title>
         <meta name="description" content="Portfolio and web solutions by Ndumiso Buthelezi. Explore projects, services, and contact info." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <meta property="og:title" content="YourBrand | Modern Web Solutions" />
+        <meta property="og:description" content="Portfolio and web solutions by Ndumiso Buthelezi. Explore projects, services, and contact info." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://ndumisobuthelezi.github.io/" />
       </Helmet>
       <div className="min-h-screen flex flex-col bg-gray-100">
         <Navbar />
