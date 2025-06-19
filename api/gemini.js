@@ -10,17 +10,14 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyC5vNkD1HGV-V7Yu_m4J7
 const DEFAULT_MODEL = 'gemma-3n-e4b-it';
 const FALLBACK_MODEL = 'gemini-2.5-flash';
 
-// Shorter initial system prompt for Gemini
-const shortSystemPrompt = `You are an expert assistant. Only answer questions using the following GitHub repositories and their metadata. Do not use outside knowledge. If the answer is not present, say "I don't know based on the provided repositories."`;
-
 router.post('/gemini', async (req, res) => {
   try {
     const { messages } = req.body;
     const model = req.query.model || DEFAULT_MODEL;
-    // Use short system prompt + user message
+    // Compose the prompt: system prompt (repo list) + user message
+    const systemPrompt = messages.find(m => m.role === 'system')?.content || '';
     const userMessage = messages.filter(m => m.role === 'user').map(m => m.content).join('\n');
-    const repoList = messages.find(m => m.role === 'system')?.content?.replace(/^[\s\S]*?Repository Data:/, 'Repository Data:') || '';
-    const prompt = `${shortSystemPrompt}\n\n${repoList}\n\n${userMessage}`;
+    const prompt = `${systemPrompt}\n\n${userMessage}`;
     // Use GoogleGenAI REST API format
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
     const apiRes = await fetch(url, {
@@ -38,7 +35,6 @@ router.post('/gemini', async (req, res) => {
     const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || data.candidates?.[0]?.content?.text || '';
     return res.status(200).json({ reply });
   } catch (err) {
-    console.error('Gemini API error:', err);
     return res.status(200).json({ error: err.message || err });
   }
 });
