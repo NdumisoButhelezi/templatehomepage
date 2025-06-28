@@ -21,7 +21,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <div className="text-xl font-bold text-gold-400 hover:text-gold-300 transition-colors duration-300">
-            YourBrand
+            CodeNerve
           </div>
 
           <div className="flex items-center space-x-6">

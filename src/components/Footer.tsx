@@ -10,10 +10,10 @@ const Footer = () => {
           <div className="space-y-4">
             {/* Added hover animation for brand name */}
             <h3 className="text-xl font-bold text-amber-400 mb-4 hover:text-amber-300 transition-colors duration-300">
-              YourBrand
+              CodeNerve
             </h3>
             <p className="mb-4">
-              A modern starter template with a clean design using black, gold, and silver gray colors.
+              CodeNerve offers modern, scalable, and user-centric digital solutions. We specialize in custom web development, UI/UX design, database integration, and system maintenance. Whether you're a startup needing a sleek website or an enterprise looking to automate operations, CodeNerve delivers reliable and innovative technology tailored to your goals.
             </p>
           </div>
           {/* Using Flexbox for link columns */}
@@ -51,17 +51,17 @@ const Footer = () => {
           <div>
             <h4 className="text-white font-bold mb-4">Contact</h4>
             <address className="not-italic space-y-2">
-              <p>123 Main Street</p>
-              <p>Anytown, USA 12345</p>
-              <p className="mt-2">info@yourbrand.com</p>
-              <p>(123) 456-7890</p>
+              <p>21 Bonamour Avenue</p>
+              <p>Berea, Durban 4001</p>
+              <p className="mt-2">melomazibuko8@gmail.com</p>
+              <p>078 683 3492</p>
             </address>
           </div>
         </div>
         {/* Added subtle animation for copyright text */}
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="hover:text-amber-400 transition-colors duration-300">
-            &copy; {new Date().getFullYear()} YourBrand. All rights reserved.
+            &copy; {new Date().getFullYear()} CodeNerve. All rights reserved.
           </p>
         </div>
       </div>

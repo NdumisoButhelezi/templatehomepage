@@ -5,8 +5,8 @@ const Hero = () => {
   
   const slides = [
     {
-      title: "Welcome to YourBrand",
-      description: "A modern and elegant starter template with a clean design using black, gold, and silver gray colors.",
+      title: "Welcome to CodeNerve",
+      description: "Precision. Speed. Core Technical Strength.",
       image: "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?auto=format&fit=crop&q=80&w=1920&h=1080"
     },
     {

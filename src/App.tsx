@@ -17,7 +17,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <Helmet>
-        <title>YourBrand | Modern Web Solutions</title>
+        <title>CodeNerve | Modern Web Solutions</title>
         <meta name="description" content="Portfolio and web solutions by Ndumiso Buthelezi. Explore projects, services, and contact info." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Helmet>
