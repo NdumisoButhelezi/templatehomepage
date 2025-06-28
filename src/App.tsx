@@ -9,17 +9,15 @@ import ContactForm from "./components/ContactForm";
 import ScrollToTop from "./components/ScrollToTop";
 import Projects from "./components/Projects";
 import NotFound from "./components/NotFound";
-// @ts-ignore
 import { Helmet } from "react-helmet";
 
-function App() {
+const App: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
       <Helmet>
-        <title>CodeNerve | Modern Web Solutions</title>
-        <meta name="description" content="Portfolio and web solutions by Ndumiso Buthelezi. Explore projects, services, and contact info." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>M.Mazibuko | Modern Web Solutions</title>
+        <meta name="description" content="Portfolio and web solutions by M.Mazibuko. Explore projects, services, and contact info." />
       </Helmet>
       <div className="min-h-screen flex flex-col bg-gray-100">
         <Navbar />
@@ -37,6 +35,6 @@ function App() {
       </div>
     </Router>
   );
-}
+};
 
 export default App;

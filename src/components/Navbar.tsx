@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DarkModeToggle from './DarkModeToggle';
-import useDarkMode from './types';
 
-const navItems = [
+interface NavItem {
+  name: string;
+  path: string;
+}
+
+const navItems: NavItem[] = [
   { name: 'Home', path: '/' },
   { name: 'About', path: '/about' },
   { name: 'Services', path: '/services' },
@@ -11,17 +15,16 @@ const navItems = [
   { name: 'Contact', path: '/contact' },
 ];
 
-const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const Navbar: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const location = useLocation();
-  const [isDark, setIsDark] = useDarkMode();
 
   return (
     <header className="bg-black dark:bg-gray-900 text-white shadow-md fixed w-full top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <div className="text-xl font-bold text-gold-400 hover:text-gold-300 transition-colors duration-300">
-            CodeNerve
+          <div className="text-xl font-bold text-amber-400 hover:text-amber-300 transition-colors duration-300">
+            M.Mazibuko
           </div>
 
           <div className="flex items-center space-x-6">
@@ -31,8 +34,8 @@ const Navbar = () => {
                   <li key={item.name}>
                     <Link
                       to={item.path}
-                      className={`hover:text-gold-400 transition-all duration-300 hover:scale-110 inline-block ${
-                        location.pathname === item.path ? 'text-gold-400' : ''
+                      className={`hover:text-amber-400 transition-all duration-300 hover:scale-110 inline-block ${
+                        location.pathname === item.path ? 'text-amber-400' : ''
                       }`}
                     >
                       {item.name}
@@ -44,7 +47,7 @@ const Navbar = () => {
             </nav>
 
             <button
-              className="md:hidden text-white hover:text-gold-400 transition-colors duration-300"
+              className="md:hidden text-white hover:text-amber-400 transition-colors duration-300"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Toggle menu"
             >
@@ -66,15 +69,15 @@ const Navbar = () => {
             </button>
           </div>
         </div>
-        {/* Mobile menu */}
+
         <nav className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} mt-4`}>
           <ul className="flex flex-col space-y-4">
             {navItems.map((item) => (
               <li key={item.name}>
                 <Link
                   to={item.path}
-                  className={`block hover:text-gold-400 transition-colors duration-300 hover:pl-2 ${
-                    location.pathname === item.path ? 'text-gold-400' : ''
+                  className={`block hover:text-amber-400 transition-colors duration-300 hover:pl-2 ${
+                    location.pathname === item.path ? 'text-amber-400' : ''
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >

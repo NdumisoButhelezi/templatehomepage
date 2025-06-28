@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
 
-const Hero = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+interface Slide {
+  title: string;
+  description: string;
+  image: string;
+}
+
+const Hero: React.FC = () => {
+  const [currentSlide, setCurrentSlide] = useState<number>(0);
   
-  const slides = [
+  const slides: Slide[] = [
     {
-      title: "Welcome to CodeNerve",
+      title: "Welcome to M.Mazibuko",
       description: "Precision. Speed. Core Technical Strength.",
       image: "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?auto=format&fit=crop&q=80&w=1920&h=1080"
     },
@@ -26,11 +32,10 @@ const Hero = () => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
   return (
     <section className="relative h-[80vh] overflow-hidden">
-      {/* Background Slideshow */}
       {slides.map((slide, index) => (
         <div
           key={index}
@@ -40,20 +45,16 @@ const Hero = () => {
         >
           <div
             className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${slide.image})`,
-            }}
+            style={{ backgroundImage: `url(${slide.image})` }}
           >
             <div className="absolute inset-0 bg-black bg-opacity-60"></div>
           </div>
         </div>
       ))}
 
-      {/* Content */}
       <div className="relative h-full">
         <div className="container mx-auto px-4 h-full flex items-center justify-center">
           <div className="text-center">
-            {/* Animated title with bounce effect */}
             <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white opacity-0 animate-[bounceIn_1s_ease-out_forwards]">
               {slides[currentSlide].title.split(' ').map((word, index) => (
                 <span
@@ -65,12 +66,10 @@ const Hero = () => {
               ))}
             </h1>
 
-            {/* Animated description */}
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto opacity-0 animate-[slideUp_1s_ease-in_0.5s_forwards]">
               {slides[currentSlide].description}
             </p>
 
-            {/* Buttons with bounce effect on hover */}
             <div className="flex justify-center gap-4">
               <button className="bg-amber-400 hover:bg-amber-500 text-black font-bold py-3 px-6 rounded-md transition-all duration-300 hover:scale-105 transform hover:animate-bounce">
                 Get Started
@@ -80,7 +79,6 @@ const Hero = () => {
               </button>
             </div>
 
-            {/* Slide indicators */}
             <div className="absolute bottom-8 left-1 right-0 flex justify-center gap-2">
               {slides.map((_, index) => (
                 <button
@@ -91,6 +89,7 @@ const Hero = () => {
                       ? 'bg-amber-400 w-6'
                       : 'bg-gray-400 hover:bg-amber-300'
                   }`}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
