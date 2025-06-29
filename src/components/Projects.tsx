@@ -16,8 +16,11 @@ type Repo = {
 
 const GITHUB_USERNAME = "NdumisoButhelezi";
 
+// Add a summarization instruction to the system prompt
+const summarizationInstruction = "When answering, use your summarization capabilities to provide concise, clear, and relevant responses based only on the provided repository data.";
+
 // Full repo list for Gemini prompt
-const initialGeminiPrompt = `You are an expert assistant. You must answer questions using ONLY the following list of GitHub repositories and their metadata. Do not use any outside knowledge or make assumptions beyond what is provided. If the answer is not present in the data, say "I don't know based on the provided repositories."
+const initialGeminiPrompt = `You are an expert assistant. Only answer questions using the following GitHub repositories and their metadata. Do not use outside knowledge. If the answer is not present, say \"I don't know based on the provided repositories.\"\n\n${summarizationInstruction}
 
 Repository Data:
 1. MarkChamane: No description. Language: TypeScript. Topics: None. Stars: 0. Forks: 0. URL: https://github.com/NdumisoButhelezi/MarkChamane
@@ -123,13 +126,6 @@ const Projects = () => {
   const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [chatHistory, setChatHistory] = useState([
-    { role: 'system', content: initialGeminiPrompt },
-    { role: 'user', content: 'what projects have i done' }
-  ]);
-  const [chatInput, setChatInput] = useState("");
-  const [chatLoading, setChatLoading] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -154,58 +150,6 @@ const Projects = () => {
   const filteredRepos = repos.filter(repo =>
     repo.name.toLowerCase().includes(filter.toLowerCase())
   );
-
-  // Scroll to bottom on new message
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatHistory]);
-
-  // Replace this with your Gemini API call
-  async function callGeminiAPI(messages: { role: string; content: string }[]) {
-    // Try primary model first
-    try {
-      const res = await fetch('/api/gemini', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages })
-      });
-      if (!res.ok) throw new Error('Primary Gemini model failed: ' + (await res.text()));
-      const data = await res.json();
-      if (data.reply) return data.reply;
-      throw new Error('No response from primary Gemini model.');
-    } catch (err) {
-      // Try fallback model (Gemini 2.5 Flash)
-      try {
-        const fallbackRes = await fetch('/api/gemini?model=gemini-2.5-flash', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages })
-        });
-        if (!fallbackRes.ok) throw new Error('Fallback Gemini model failed: ' + (await fallbackRes.text()));
-        const fallbackData = await fallbackRes.json();
-        if (fallbackData.reply) return fallbackData.reply;
-        throw new Error('No response from fallback Gemini model.');
-      } catch (fallbackErr) {
-        return `Error: ${
-          typeof fallbackErr === 'object' && fallbackErr !== null && 'message' in fallbackErr
-            ? (fallbackErr as { message: string }).message
-            : String(fallbackErr)
-        }`;
-      }
-    }
-  }
-
-  const handleChatSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!chatInput.trim()) return;
-    setChatLoading(true);
-    const newHistory = [...chatHistory, { role: 'user', content: chatInput }];
-    setChatHistory(newHistory);
-    const reply = await callGeminiAPI(newHistory);
-    setChatHistory([...newHistory, { role: 'assistant', content: reply }]);
-    setChatInput("");
-    setChatLoading(false);
-  };
 
   return (
     <section className="py-16 bg-gray-100 dark:bg-gray-800">
@@ -260,49 +204,124 @@ const Projects = () => {
             )}
           </div>
         )}
-        <div className="my-12 max-w-2xl mx-auto bg-white dark:bg-gray-700 p-6 rounded-lg shadow">
-          <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Ask Gemini about your GitHub projects</h3>
-          <div className="mb-4">
-            <label className="block text-gray-700 dark:text-gray-300 mb-1 font-semibold">Initial Gemini Prompt:</label>
-            <textarea
-              className="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white mb-2"
-              rows={8}
-              value={initialGeminiPrompt}
-              readOnly
-            />
-          </div>
-          <div className="border-t border-gray-300 dark:border-gray-600 pt-4">
-            <div className="h-64 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-2 rounded mb-2" style={{ maxHeight: 300 }}>
-              {chatHistory.map((msg, i) => (
-                <div key={i} className={`mb-2 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
-                  <span className={`inline-block px-3 py-2 rounded-lg ${msg.role === 'user' ? 'bg-amber-400 text-black' : 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white'}`}>
-                    <b>{msg.role === 'user' ? 'You' : 'Gemini'}:</b> {msg.content}
-                  </span>
-                </div>
-              ))}
-              <div ref={chatEndRef} />
-            </div>
-            <form onSubmit={handleChatSubmit} className="flex gap-2">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={e => setChatInput(e.target.value)}
-                placeholder="Ask a question about your projects..."
-                className="flex-1 p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                disabled={chatLoading}
-              />
-              <button
-                type="submit"
-                disabled={chatLoading || !chatInput.trim()}
-                className="bg-amber-400 hover:bg-amber-500 text-black font-bold py-2 px-4 rounded-md transition-all disabled:opacity-60"
-              >
-                {chatLoading ? 'Sending...' : 'Send'}
-              </button>
-            </form>
-          </div>
-        </div>
+        <ChatbotWidget />
       </div>
     </section>
+  );
+};
+
+const ChatbotWidget = () => {
+  const [open, setOpen] = useState(false);
+  const [chatHistory, setChatHistory] = useState([
+    { role: 'system', content: initialGeminiPrompt },
+    { role: 'user', content: 'what projects have i done' }
+  ]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (open) chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatHistory, open]);
+
+  async function callGeminiAPI(messages: { role: string; content: string }[]) {
+    // Try primary model first
+    try {
+      const res = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages })
+      });
+      if (!res.ok) throw new Error('Primary Gemini model failed: ' + (await res.text()));
+      const data = await res.json();
+      if (data.reply) return data.reply;
+      throw new Error('No response from primary Gemini model.');
+    } catch (err) {
+      // Try fallback model (Gemini 2.5 Flash)
+      try {
+        const fallbackRes = await fetch('/api/gemini?model=gemini-2.5-flash', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages })
+        });
+        if (!fallbackRes.ok) throw new Error('Fallback Gemini model failed: ' + (await fallbackRes.text()));
+        const fallbackData = await fallbackRes.json();
+        if (fallbackData.reply) return fallbackData.reply;
+        throw new Error('No response from fallback Gemini model.');
+      } catch (fallbackErr) {
+        return `Error: ${
+          typeof fallbackErr === 'object' && fallbackErr !== null && 'message' in fallbackErr
+            ? (fallbackErr as { message: string }).message
+            : String(fallbackErr)
+        }`;
+      }
+    }
+  }
+
+  const handleChatSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    setChatLoading(true);
+    const newHistory = [...chatHistory, { role: 'user', content: chatInput }];
+    setChatHistory(newHistory);
+    const reply = await callGeminiAPI(newHistory);
+    setChatHistory([...newHistory, { role: 'assistant', content: reply }]);
+    setChatInput("");
+    setChatLoading(false);
+  };
+
+  return (
+    <div>
+      <button
+        className="fixed bottom-6 right-6 z-50 bg-amber-400 hover:bg-amber-500 text-black font-bold p-4 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
+        onClick={() => setOpen((v) => !v)}
+        aria-label={open ? "Close chatbot" : "Open chatbot"}
+      >
+        {open ? (
+          <span className="text-2xl">×</span>
+        ) : (
+          <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path d="M12 22c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z" />
+            <path d="M15 9h.01M9 9h.01M8 13c.667 1 2.333 1 3 0" />
+          </svg>
+        )}
+      </button>
+      {open && (
+        <div className="fixed bottom-24 right-6 z-50 w-80 max-w-full bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col max-h-[80vh]">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-amber-400 rounded-t-xl flex items-center justify-between">
+            <span className="font-bold text-black">Ask Gemini</span>
+            <button onClick={() => setOpen(false)} className="text-black text-xl font-bold">×</button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900" style={{ minHeight: 200 }}>
+            {chatHistory.filter(m => m.role !== 'system').map((msg, i) => (
+              <div key={i} className={`mb-2 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
+                <span className={`inline-block px-3 py-2 rounded-lg ${msg.role === 'user' ? 'bg-amber-400 text-black' : 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white'}`}>
+                  <b>{msg.role === 'user' ? 'You' : 'Gemini'}:</b> {msg.content}
+                </span>
+              </div>
+            ))}
+            <div ref={chatEndRef} />
+          </div>
+          <form onSubmit={handleChatSubmit} className="flex gap-2 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-xl">
+            <input
+              type="text"
+              value={chatInput}
+              onChange={e => setChatInput(e.target.value)}
+              placeholder="Ask about your projects..."
+              className="flex-1 p-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              disabled={chatLoading}
+            />
+            <button
+              type="submit"
+              disabled={chatLoading || !chatInput.trim()}
+              className="bg-amber-400 hover:bg-amber-500 text-black font-bold py-2 px-4 rounded-md transition-all disabled:opacity-60"
+            >
+              {chatLoading ? '...' : 'Send'}
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -3,10 +3,13 @@
 
 import express from 'express';
 import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const router = express.Router();
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyC5vNkD1HGV-V7Yu_m4J76skFkChvXKr4s';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const DEFAULT_MODEL = 'gemma-3n-e4b-it';
 const FALLBACK_MODEL = 'gemini-2.5-flash';
 
