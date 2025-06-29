@@ -13,6 +13,9 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const DEFAULT_MODEL = 'gemma-3n-e4b-it';
 const FALLBACK_MODEL = 'gemini-2.5-flash';
 
+// Detect environment: use alternate Gemini API base URL if provided, else use default
+const GEMINI_API_BASE_URL = process.env.GEMINI_API_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta';
+
 router.post('/gemini', async (req, res) => {
   try {
     const { messages } = req.body;
@@ -21,8 +24,8 @@ router.post('/gemini', async (req, res) => {
     const systemPrompt = messages.find(m => m.role === 'system')?.content || '';
     const userMessage = messages.filter(m => m.role === 'user').map(m => m.content).join('\n');
     const prompt = `${systemPrompt}\n\n${userMessage}`;
-    // Use GoogleGenAI REST API format
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+    // Use environment-based Gemini API base URL
+    const url = `${GEMINI_API_BASE_URL}/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
     const apiRes = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

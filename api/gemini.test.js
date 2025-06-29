@@ -1,7 +1,10 @@
 // api/gemini.test.js
 import fetch from 'node-fetch';
 
-const BASE_URL = 'http://localhost:5175/api/gemini';
+// Detect environment: use Vercel URL if running on Vercel or in production, else use localhost
+const BASE_URL = (process.env.VERCEL || process.env.NODE_ENV === 'production')
+  ? 'https://templatehomepage-krd3amfvl-planet-09-ais-projects.vercel.app/api/gemini'
+  : 'http://localhost:5175/api/gemini';
 
 async function testGeminiAPI() {
   const messages = [
