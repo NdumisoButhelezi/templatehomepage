@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import DarkModeToggle from './DarkModeToggle';
+import useDarkMode from './types';
 
 const navItems = [
   { name: 'Home', path: '/' },
   { name: 'About', path: '/about' },
   { name: 'Services', path: '/services' },
+  { name: 'Projects', path: '/projects' },
   { name: 'Contact', path: '/contact' },
 ];
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const [isDark, setIsDark] = useDarkMode();
 
   return (
     <header className="bg-black dark:bg-gray-900 text-white shadow-md fixed w-full top-0 z-50">
@@ -22,7 +25,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-6">
-            <nav className="hidden md:block">
+            <nav className="hidden md:block" aria-label="Main navigation">
               <ul className="flex space-x-6">
                 {navItems.map((item) => (
                   <li key={item.name}>
@@ -31,15 +34,15 @@ const Navbar = () => {
                       className={`hover:text-gold-400 transition-all duration-300 hover:scale-110 inline-block ${
                         location.pathname === item.path ? 'text-gold-400' : ''
                       }`}
+                      aria-current={location.pathname === item.path ? 'page' : undefined}
                     >
                       {item.name}
                     </Link>
                   </li>
                 ))}
               </ul>
+              <DarkModeToggle />
             </nav>
-
-            <DarkModeToggle />
 
             <button
               className="md:hidden text-white hover:text-gold-400 transition-colors duration-300"
@@ -64,8 +67,8 @@ const Navbar = () => {
             </button>
           </div>
         </div>
-
-        <nav className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} mt-4`}>
+        {/* Mobile menu */}
+        <nav className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} mt-4`} aria-label="Mobile navigation">
           <ul className="flex flex-col space-y-4">
             {navItems.map((item) => (
               <li key={item.name}>
@@ -75,6 +78,7 @@ const Navbar = () => {
                     location.pathname === item.path ? 'text-gold-400' : ''
                   }`}
                   onClick={() => setIsMenuOpen(false)}
+                  aria-current={location.pathname === item.path ? 'page' : undefined}
                 >
                   {item.name}
                 </Link>

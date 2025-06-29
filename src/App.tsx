@@ -7,19 +7,35 @@ import About from "./components/About";
 import Services from "./components/Services";
 import ContactForm from "./components/ContactForm";
 import ScrollToTop from "./components/ScrollToTop";
+import Projects from "./components/Projects";
+import NotFound from "./components/NotFound";
+// @ts-ignore
+import { Helmet } from "react-helmet";
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
+      <Helmet>
+        <title>YourBrand | Modern Web Solutions</title>
+        <meta name="description" content="Portfolio and web solutions by Ndumiso Buthelezi. Explore projects, services, and contact info." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <meta property="og:title" content="YourBrand | Modern Web Solutions" />
+        <meta property="og:description" content="Portfolio and web solutions by Ndumiso Buthelezi. Explore projects, services, and contact info." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://ndumisobuthelezi.github.io/" />
+      </Helmet>
       <div className="min-h-screen flex flex-col bg-gray-100">
         <Navbar />
-        <main className="flex-grow pt-20">
+        <main className="flex-grow pt-20" aria-label="Main content">
           <Routes>
             <Route path="/" element={<><Hero /><Features /></>} />
             <Route path="/about" element={<About />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/projects" element={<Projects />} />
             <Route path="/contact" element={<ContactForm />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <Footer />
