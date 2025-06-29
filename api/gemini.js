@@ -1,28 +1,23 @@
-// Simple Gemini API proxy for Vite/Node.js
-// Place this in your project root as api/gemini.js
-
-import express from 'express';
+// Simple Gemini API proxy for Vercel serverless
 import fetch from 'node-fetch';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const router = express.Router();
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const DEFAULT_MODEL = 'gemma-3n-e4b-it';
 const FALLBACK_MODEL = 'gemini-2.5-flash';
+const GEMINI_API_BASE_URL = process.env.GEMINI_API_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta';
 
-router.post('/gemini', async (req, res) => {
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
   try {
     const { messages } = req.body;
     const model = req.query.model || DEFAULT_MODEL;
-    // Compose the prompt: system prompt (repo list) + user message
     const systemPrompt = messages.find(m => m.role === 'system')?.content || '';
     const userMessage = messages.filter(m => m.role === 'user').map(m => m.content).join('\n');
     const prompt = `${systemPrompt}\n\n${userMessage}`;
-    // Use GoogleGenAI REST API format
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+    const url = `${GEMINI_API_BASE_URL}/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
     let apiRes, data;
     try {
       apiRes = await fetch(url, {
@@ -36,7 +31,7 @@ router.post('/gemini', async (req, res) => {
       if (!apiRes.ok) {
         console.error('Gemini API error:', data);
         // Try fallback model
-        const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/${FALLBACK_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+        const fallbackUrl = `${GEMINI_API_BASE_URL}/models/${FALLBACK_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
         try {
           const fallbackRes = await fetch(fallbackUrl, {
             method: 'POST',
@@ -68,6 +63,4 @@ router.post('/gemini', async (req, res) => {
     console.error('Server error:', err);
     return res.status(200).json({ error: err.message || err });
   }
-});
-
-export default router;
+}
