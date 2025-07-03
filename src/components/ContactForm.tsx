@@ -27,29 +27,90 @@ const ContactForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const validate = (): FormErrors => {
+  // Old validate function (not used, can be removed)
+  // const validate = (): FormErrors => {
+  //   const newErrors: FormErrors = {};
+  //   if (!formData.name.trim()) newErrors.name = 'Name is required';
+  //   if (!formData.email.trim()) {
+  //     newErrors.email = 'Email is required';
+  //   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+  //     newErrors.email = 'Email is invalid';
+  //   }
+  //   if (!formData.message.trim()) newErrors.message = 'Message is required';
+  //   return newErrors;
+  // };
+
+  // Enhanced validation: stricter rules
+  const enhancedValidate = (): FormErrors => {
     const newErrors: FormErrors = {};
     if (!formData.name.trim()) newErrors.name = 'Name is required';
+    else if (formData.name.length < 2) newErrors.name = 'Name must be at least 2 characters';
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Email is invalid';
     }
     if (!formData.message.trim()) newErrors.message = 'Message is required';
+    else if (formData.message.length < 10) newErrors.message = 'Message must be at least 10 characters';
     return newErrors;
   };
 
+  // Old handleChange function (not used, can be removed)
+  // const handleChangeOld = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  //   const { name, value } = e.target;
+  //   setFormData(prev => ({ ...prev, [name]: value }));
+  //   if (errors[name as keyof FormErrors]) {
+  //     setErrors(prev => ({ ...prev, [name]: '' }));
+  //   }
+  // };
+
+  // Real-time validation feedback
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+    // Validate this field only
+    let fieldError = '';
+    if (name === 'name') {
+      if (!value.trim()) fieldError = 'Name is required';
+      else if (value.length < 2) fieldError = 'Name must be at least 2 characters';
     }
+    if (name === 'email') {
+      if (!value.trim()) fieldError = 'Email is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) fieldError = 'Email is invalid';
+    }
+    if (name === 'message') {
+      if (!value.trim()) fieldError = 'Message is required';
+      else if (value.length < 10) fieldError = 'Message must be at least 10 characters';
+    }
+    setErrors(prev => ({ ...prev, [name]: fieldError }));
   };
 
+  // Old handleSubmit function (not used, can be removed)
+  // const handleSubmitOld = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   const validationErrors = validate();
+  //   if (Object.keys(validationErrors).length > 0) {
+  //     setErrors(validationErrors);
+  //     return;
+  //   }
+  //   setIsSubmitting(true);
+  //   try {
+  //     await addDoc(collection(db, "messages"), {
+  //       ...formData,
+  //       createdAt: Timestamp.now()
+  //     });
+  //     setSubmitSuccess(true);
+  //     setFormData({ name: '', email: '', message: '' });
+  //   } catch (error) {
+  //     console.error('Submission error:', error);
+  //     setErrors({ message: "Failed to send message. Please try again." });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const validationErrors = validate();
+    const validationErrors = enhancedValidate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
